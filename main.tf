@@ -1,43 +1,37 @@
-resource "aws_default_vpc" "maruti" {
+
+resource "aws_vpc" "main" {
   tags = {
-    Name = "Default VPC"
+    Name = "example"
   }
 }
 
-resource "aws_security_group" "allow_tls" {
-  name        = "my_sg"
-  description = "Allow TLS inbound traffic and all outbound traffic"
-  vpc_id      = aws_default_vpc.maruti.id
+resource "aws_security_group" "example" {
+  name        = var.sg_name
+  description = "Allow inbound traffic on port 80 and 22"
+  vpc_id = aws_vpc.main.id  # Reference the ID of the VPC created above
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.ingress1_cidr_ipv4  # Allow traffic from any source on port 80
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.ingress2_cidr_ipv4  # Allow traffic from any source on port 22 (SSH)
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"  # Allow all outbound traffic
+    cidr_blocks = var.egress1_cidr_blocks
+  }
 
   tags = {
-    Name = "my_sg"
+    Name = "security-group"
   }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
-  security_group_id = aws_security_group.my_sg.id
-  cidr_ipv4         = ["0.0.0.0/0"]
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv6" {
-  security_group_id = aws_security_group.my_sg.id
-  cidr_ipv6         = ["0.0.0.0/0"]
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv6         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
 }
