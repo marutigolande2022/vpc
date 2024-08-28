@@ -7,7 +7,7 @@ terraform {
  }
 
  backend "s3" {
-   bucket = "exceloid-tfstate-terraform"
+   bucket = "exceloid-tfstate-terrafrom"
    key    = "state"
    region = "us-east-1"
  }
