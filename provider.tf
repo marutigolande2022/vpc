@@ -6,9 +6,9 @@ terraform {
    }
  }
 
- backend "s3" {
-   bucket = "exceloid-tfstate-terrafrom"
-   key    = "state"
-   region = "ap-south-1"
- }
-}
+# backend "s3" {
+#   bucket = "exceloid-tfstate-terrafrom"
+#   key    = "state"
+#   region = "ap-south-1"
+#}
+#}
